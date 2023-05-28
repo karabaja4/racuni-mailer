@@ -8,8 +8,9 @@ const util = require('util');
 const validator = require("email-validator");
 const colorize = require('json-colorizer');
 dayjs.extend(require('dayjs/plugin/customParseFormat'));
-const templates = require('./templates.json').templates;
-const homedir = require('os').homedir();
+const config = require('./config.json');
+const templates = config.templates;
+const directory = config.directory;
 
 const readline = require('readline');
 const rl = readline.createInterface({
@@ -31,17 +32,16 @@ const main = async () => {
 
   // load
   const invoices = [];
-  const dir = `${homedir}/downloads`;
   let files = null;
   try {
-    files = await fs.promises.readdir(dir);
+    files = await fs.promises.readdir(directory);
   } catch (e) {
     error(e.message);
   }
   for (let i = 0; i < files.length; i++) {
     const filename = files[i];
     if (filename.endsWith('.pdf')) {
-      const fullpath = path.join(dir, filename);
+      const fullpath = path.join(directory, filename);
       const buffer = await fs.promises.readFile(fullpath);
       const data = await pdfparse(buffer);
       const lines = data.text.split('\n').filter(x => x);
