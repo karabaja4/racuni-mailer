@@ -46,6 +46,9 @@ const main = async () => {
       const data = await pdfparse(buffer);
       const lines = data.text.split('\n').filter(x => x);
       if (lines[0] === 'Račun (Invoice)') {
+        if (invoices.length > 0) {
+          error('More than one invoice found!');
+        }
         invoices.push({
           path: fullpath,
           lines: lines
@@ -54,7 +57,7 @@ const main = async () => {
     }
   }
   if (invoices.length !== 1) {
-    error('Cannot find a single invoice!');
+    error('Cannot find an invoice!');
   }
 
   // process
