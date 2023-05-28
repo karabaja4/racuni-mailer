@@ -100,8 +100,8 @@ const main = async () => {
       error('Invalid email data!');
     }
     for (let key in dict) {
-      template.message = template.message.replace(`{${key}}`, dict[key]);
-      template.subject = template.subject.replace(`{${key}}`, dict[key]);
+      template.message = template.message.replaceAll(`{${key}}`, dict[key]);
+      template.subject = template.subject.replaceAll(`{${key}}`, dict[key]);
     }
     template.attachments = [{
       filename: path.basename(invoice.path),
