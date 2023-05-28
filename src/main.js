@@ -120,7 +120,7 @@ const send = async (template) => {
   };
   console.log(colorize(JSON.stringify(mail, null, 2)));
   const answer = await question('Send this email? [y/N] ');
-  if (answer.trim().toLowerCase() == 'y') {
+  if (answer.trim().toLowerCase() === 'y') {
     const transport = {
       host: 'smtp.office365.com',
       port: 587,
