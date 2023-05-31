@@ -25,7 +25,7 @@ const error = (text) => {
 }
 
 if (!templates) {
-  error('Cannot load templates');
+  error('Cannot load templates!');
 }
 
 const main = async () => {
