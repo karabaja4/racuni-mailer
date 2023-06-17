@@ -45,7 +45,8 @@ const main = async () => {
       const buffer = await fs.promises.readFile(fullpath);
       const data = await pdfparse(buffer);
       const lines = data.text.split('\n').filter(x => x);
-      if (lines[1] === 'Račun (Invoice)') {
+      const title = 'Račun (Invoice)';
+      if (lines[0] === title || lines[1] === title) {
         if (invoices.length > 0) {
           error('More than one invoice found!');
         }
