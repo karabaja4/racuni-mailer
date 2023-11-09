@@ -1,14 +1,17 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
+const util = require('node:util');
+
 const pdfparse = require('pdf-parse');
 const nodemailer = require('nodemailer');
 const dayjs = require('dayjs');
 const chalk = require('chalk');
-const util = require('util');
-const validator = require("email-validator");
+const validator = require('email-validator');
 const colorize = require('json-colorizer');
+
 dayjs.extend(require('dayjs/plugin/customParseFormat'));
 const config = require('./config.json');
+
 const templates = config.templates;
 const directory = config.directory;
 
@@ -73,7 +76,7 @@ const main = async () => {
 
   const invoice = invoices[0];
 
-  const amount = getValue(invoice.lines, 'Ukupan iznos naplate (Grand total): ');
+  const amount = getValue(invoice.lines, 'Ukupan iznos naplate (Grand total):');
   const invoiceNumber = getValue(invoice.lines, 'Broj računa (Invoice number):');
   const dateText = getValue(invoice.lines, 'Datum isporuke (Delivery date):');
 
