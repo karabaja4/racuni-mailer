@@ -12,9 +12,6 @@ const colorize = require('json-colorizer');
 dayjs.extend(require('dayjs/plugin/customParseFormat'));
 const config = require('./config.json');
 
-const templates = config.templates;
-const directory = config.directory;
-
 const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
@@ -27,8 +24,23 @@ const error = (text) => {
   process.exit(1);
 }
 
-if (!templates) {
-  error('Cannot load templates!');
+const templateValid = (template) => {
+  return template?.username && template?.password &&
+         template?.from?.name && template?.from?.address &&
+         template?.to?.name && template?.to?.address &&
+         template?.message && template?.subject &&
+         validator.validate(template.from.address) &&
+         validator.validate(template.to.address);
+}
+
+if (!config.directory || !config.templates || config.templates.length === 0) {
+  error('Invalid config.json');
+} else {
+  for (let i = 0; i < config.templates.length; i++) {
+    if (!templateValid(config.templates[i])) {
+      error('Invalid config.json');
+    }
+  }
 }
 
 const main = async () => {
@@ -37,14 +49,14 @@ const main = async () => {
   const invoices = [];
   let files = null;
   try {
-    files = await fs.promises.readdir(directory);
+    files = await fs.promises.readdir(config.directory);
   } catch (e) {
     error(e.message);
   }
   for (let i = 0; i < files.length; i++) {
     const filename = files[i];
     if (filename.endsWith('.pdf')) {
-      const fullpath = path.join(directory, filename);
+      const fullpath = path.join(config.directory, filename);
       const buffer = await fs.promises.readFile(fullpath);
       const data = await pdfparse(buffer);
       const lines = data.text.split('\n').filter(x => x);
@@ -94,15 +106,8 @@ const main = async () => {
     invoiceNumber: invoiceNumber
   };
 
-  for (let i = 0; i < templates.length; i++) {
-    const template = templates[i];
-    // validate
-    if (!template.name || !template.sender || !template.password ||
-        !template.recipient || !template.message || !template.subject ||
-        !validator.validate(template.sender) ||
-        !validator.validate(template.recipient)) {
-      error('Invalid email data!');
-    }
+  for (let i = 0; i < config.templates.length; i++) {
+    const template = config.templates[i];
     for (let key in dict) {
       template.message = template.message.replaceAll(`{${key}}`, dict[key]);
       template.subject = template.subject.replaceAll(`{${key}}`, dict[key]);
@@ -119,8 +124,8 @@ const main = async () => {
 const send = async (template) => {
   console.log('Email to send:');
   const mail = {
-    from: `"${template.name}" <${template.sender}>`,
-    to: template.recipient,
+    from: template.from,
+    to: template.to,
     subject: template.subject,
     text: template.message,
     attachments: template.attachments
@@ -133,7 +138,7 @@ const send = async (template) => {
       port: 587,
       secure: false,
       auth: {
-        user: template.sender,
+        user: template.username,
         pass: template.password,
       },
       tls: {
@@ -142,7 +147,7 @@ const send = async (template) => {
     };
     const transporter = nodemailer.createTransport(transport);
     const info = await transporter.sendMail(mail);
-    console.log(chalk.blue(`Message sent to ${template.recipient}\n${info.messageId}`));
+    console.log(chalk.blue(`Message sent to ${template.to.name} <${template.to.address}>\n${info.messageId}`));
   } else {
     console.log(chalk.red('Email NOT sent.'));
   }
