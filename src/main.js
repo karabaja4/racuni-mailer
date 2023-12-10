@@ -6,11 +6,10 @@ const pdfparse = require('pdf-parse');
 const nodemailer = require('nodemailer');
 const dayjs = require('dayjs');
 const chalk = require('chalk');
-const validator = require('email-validator');
 const colorize = require('json-colorizer');
 
 dayjs.extend(require('dayjs/plugin/customParseFormat'));
-const config = require('./config.json');
+const config = require('./config').get();
 
 const readline = require('readline');
 const rl = readline.createInterface({
@@ -22,25 +21,6 @@ const question = util.promisify(rl.question).bind(rl);
 const error = (text) => {
   console.log(chalk.red(text));
   process.exit(1);
-}
-
-const templateValid = (template) => {
-  return template?.username && template?.password &&
-         template?.from?.name && template?.from?.address &&
-         template?.to?.name && template?.to?.address &&
-         template?.message && template?.subject &&
-         validator.validate(template.from.address) &&
-         validator.validate(template.to.address);
-}
-
-if (!config.directory || !config.templates || config.templates.length === 0) {
-  error('Invalid config.json');
-} else {
-  for (let i = 0; i < config.templates.length; i++) {
-    if (!templateValid(config.templates[i])) {
-      error('Invalid config.json');
-    }
-  }
 }
 
 const main = async () => {
