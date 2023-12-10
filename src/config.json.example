@@ -6,8 +6,8 @@
       "password": "mysupersecretpassword",
       "from": { "name": "Art Vandelay", "address": "art.vandelay@vandelayindustries.com" },
       "to": { "name": "Jerry Seinfeld", "address": "jerry@seinfeld.com" },
-      "message": "A copy of the invoice for month {monthNumber} ({monthName}) {year}.\n\nRegards,\n\nVandelay Industries Ltd\nArt Vandelay",
-      "subject": "Invoice {year}-{invoiceNumber}"
+      "subject": "Invoice {year}-{invoiceNumber}",
+      "message": "A copy of the invoice for month {monthNumber} ({monthName}) {year}.\n\nRegards,\n\nVandelay Industries Ltd\nArt Vandelay"
     }
   ]
 }
