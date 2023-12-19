@@ -98,6 +98,7 @@ const main = async () => {
     }];
     await send(template);
   }
+  await cleanup(invoice.path);
   rl.close();
 }
 
@@ -130,6 +131,16 @@ const send = async (template) => {
     console.log(chalk.blue(`Message sent to ${template.to.name} <${template.to.address}>\n${info.messageId}`));
   } else {
     console.log(chalk.red('Email NOT sent.'));
+  }
+}
+
+const cleanup = async (filepath) => {
+  const answer = await question(`Delete ${filepath}? [y/N] `);
+  if (answer.trim().toLowerCase() === 'y') {
+    await fs.promises.unlink(filepath);
+    console.log(chalk.blue(`Invoice deleted.`));
+  } else {
+    console.log(chalk.red(`Invoice NOT deleted.`));
   }
 }
 
