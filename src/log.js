@@ -1,3 +1,4 @@
+const path = require('node:path');
 const chalk = require('chalk');
 const colorize = require('json-colorizer');
 
@@ -29,9 +30,10 @@ const fatal = (text) => {
 };
 
 const usage = () => {
+  const script = path.basename(process.argv[1] || 'racuni');
   console.log(chalk.magenta('racuni 1.1'));
-  console.log(`usage: racuni ${chalk.green('(days)')}x${chalk.green('(daily-rate-in-€)')}...`);
-  console.log('example: racuni 12x400 8x500');
+  console.log(`usage: ${script} ${chalk.green('(days)')}x${chalk.green('(daily-rate-in-€)')}...`);
+  console.log(`example: ${script} 12x400 8x500`);
   process.exit(2);
 };
 
