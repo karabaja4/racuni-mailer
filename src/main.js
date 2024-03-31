@@ -1,4 +1,6 @@
 const util = require('node:util');
+const fs = require('node:fs');
+const path = require('node:path');
 const nodemailer = require('nodemailer');
 
 // dayjs
@@ -107,12 +109,22 @@ const main = async () => {
     log.fatal();
   }
   
-  const pdf = await response.arrayBuffer();
-  if (pdf.byteLength < 30000) {
-    log.fatal(`PDF size suspiciously low (${pdf.byteLength} bytes)`);
+  const raw = await response.arrayBuffer();
+  if (raw.byteLength < 30000) {
+    log.fatal(`PDF size suspiciously low (${raw.byteLength} bytes)`);
   }
   
-  log.success(`${api} returned ${response.status} with PDF of ${pdf.byteLength} bytes`);
+  log.success(`${api} returned ${response.status} with PDF of ${raw.byteLength} bytes`);
+  
+  const pdf = {
+    filename: `${dict.year}-${dict.invoiceNumber}.pdf`,
+    buffer: Buffer.from(raw)
+  };
+  
+  // save file for preview
+  const previewPath = path.join(config.directory, pdf.filename);
+  await fs.promises.writeFile(previewPath, pdf.buffer);
+  log.success(`File saved at ${previewPath}`);
 
   // for every template
   for (let i = 0; i < config.templates.length; i++) {
@@ -122,8 +134,8 @@ const main = async () => {
       template.subject = template.subject.replaceAll(`{${key}}`, dict[key]);
     }
     template.attachments = [{
-      filename: `${dict.year}-${dict.invoiceNumber}.pdf`,
-      content: Buffer.from(pdf),
+      filename: pdf.filename,
+      content: pdf.buffer,
       contentType: 'application/pdf'
     }];
     await send(template);

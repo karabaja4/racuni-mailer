@@ -16,7 +16,7 @@ const isTemplateValid = (template) => {
 }
 
 const isValid = () => {
-  if (!config.templates || config.templates.length === 0) {
+  if (!config.directory || !config.templates || config.templates.length === 0) {
     return false;
   } else {
     for (let i = 0; i < config.templates.length; i++) {
