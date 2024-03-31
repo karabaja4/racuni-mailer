@@ -58,21 +58,14 @@ const buildItemsFromArguments = () => {
   return items;
 };
 
-const mod = (n, m) => {
-  return ((n % m) + m) % m;
-};
-
 // calculate end of month
 // if before 15th, look at previous month
 const getEndOfMonth = () => {
-  const tz = 'Europe/Zagreb';
-  const now = dayjs().tz(tz);
-  let month = now.month();
+  const now = dayjs().tz('Europe/Zagreb');
   if (now.date() <= 15) {
-    month -= 1;
-    month = mod(month, 12);
+    return now.subtract(20, 'day').endOf('month');
   }
-  return dayjs.tz(new Date(now.year(), month, 1), tz).endOf('month');
+  return now.endOf('month');
 };
 
 const main = async () => {
