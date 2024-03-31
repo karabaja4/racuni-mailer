@@ -65,13 +65,14 @@ const mod = (n, m) => {
 // calculate end of month
 // if before 15th, look at previous month
 const getEndOfMonth = () => {
-  const now = dayjs().tz('Europe/Zagreb');
+  const tz = 'Europe/Zagreb';
+  const now = dayjs().tz(tz);
   let month = now.month();
   if (now.date() <= 15) {
     month -= 1;
     month = mod(month, 12);
   }
-  return dayjs.tz(new Date(now.year(), month, 1), 'Europe/Zagreb').endOf('month');
+  return dayjs.tz(new Date(now.year(), month, 1), tz).endOf('month');
 };
 
 const main = async () => {
