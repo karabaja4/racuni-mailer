@@ -8,7 +8,7 @@
   "sellerPostCode": "10000",
   "sellerCity": "Zagreb",
   "sellerCountry": "Hrvatska (Croatia)",
-  "sellerVatNumber": "HR47263538192",
+  "sellerVatNumber": "HR 47263538192",
   "sellerIBAN": "HR6347264928374615242",
   "sellerSWIFT": "ESBCHR22",
   "sellerBank": "Erste&Steiermärkische Bank d.d.",
@@ -18,6 +18,6 @@
   "buyerPostCode": "20095",
   "buyerCity": "Hamburg",
   "buyerCountry": "Germany",
-  "buyerVatNumber": "DE29937562531",
+  "buyerVatNumber": "DE 29937562531",
   "items": []
 }
