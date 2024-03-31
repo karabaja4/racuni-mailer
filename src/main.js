@@ -142,7 +142,7 @@ const main = async () => {
   }
   
   rl.close();
-}
+};
 
 const send = async (template) => {
   
@@ -178,6 +178,6 @@ const send = async (template) => {
   } else {
     log.error('Email NOT sent.');
   }
-}
+};
 
 main();
