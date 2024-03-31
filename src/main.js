@@ -58,7 +58,6 @@ const buildItemsFromArguments = () => {
   return items;
 };
 
-// calculate end of month
 // if before 15th, look at previous month
 const getInvoiceDate = () => {
   const now = dayjs().tz('Europe/Zagreb');
