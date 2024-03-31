@@ -1,0 +1,23 @@
+{
+  "invoiceId": 0,
+  "invoiceMonth": 0,
+  "invoiceYear": 0,
+  "logoUrl": "https://avacyn.radiance.hr/radiance/oblak.svg",
+  "sellerName": "Oblak d.o.o.",
+  "sellerStreet": "Trg Bana Jelačića 1",
+  "sellerPostCode": "10000",
+  "sellerCity": "Zagreb",
+  "sellerCountry": "Hrvatska (Croatia)",
+  "sellerVatNumber": "HR47263538192",
+  "sellerIBAN": "HR6347264928374615242",
+  "sellerSWIFT": "ESBCHR22",
+  "sellerBank": "Erste&Steiermärkische Bank d.d.",
+  "sellerOperator": "Art Vandelay",
+  "buyerName": "Evil Corp Ltd",
+  "buyerStreet": "Sesame Street 1",
+  "buyerPostCode": "20095",
+  "buyerCity": "Hamburg",
+  "buyerCountry": "Germany",
+  "buyerVatNumber": "DE29937562531",
+  "items": []
+}

@@ -1,16 +1,18 @@
-const fs = require('node:fs');
-const path = require('node:path');
 const util = require('node:util');
-
-const pdfparse = require('pdf-parse');
 const nodemailer = require('nodemailer');
+
+// dayjs
 const dayjs = require('dayjs');
-const chalk = require('chalk');
-const colorize = require('json-colorizer');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-dayjs.extend(require('dayjs/plugin/customParseFormat'));
 const config = require('./config').get();
+const log = require('./log');
+const invoice = require('./invoice');
 
+// readline setup
 const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
@@ -18,74 +20,101 @@ const rl = readline.createInterface({
 });
 const question = util.promisify(rl.question).bind(rl);
 
-const error = (text) => {
-  console.log(chalk.red(text));
-  process.exit(1);
-}
+const isNumericString = (value) => {
+  if (value === null || value === undefined) return false;
+  const regex = /^[0-9]+$/i;
+  return regex.test(value.toString());
+};
+
+const buildItemsFromArguments = () => {
+  const items = [];
+  const args = process.argv.slice(2);
+  if (args.length < 1) {
+    log.usage();
+  }
+  for (let i = 0; i < args.length; i++) {
+    const split = args[i].trim().split('x');
+    if (split.length !== 2 || !isNumericString(split[0]) || !isNumericString(split[1])) {
+      log.usage();
+    }
+    const days = parseInt(split[0]);
+    const price = parseInt(split[1]);
+    if ((days === 0) || (days > 31) || (price < 300) || (price > 1000)) {
+      log.usage();
+    }
+    const item = {
+      description: 'Software Development',
+      unit: 'dan (day)',
+      price: price,
+      quantity: days
+    };
+    if (args.length > 1) {
+      item.description += ` (P${(i + 1)})`;
+    }
+    items.push(item);
+  }
+  return items;
+};
+
+// calculate end of month
+// if before 15th, look at previous month
+const getEndOfMonth = () => {
+  const now = dayjs().tz('Europe/Zagreb');
+  if (now.date() <= 15) {
+    return now.subtract(1, 'month').endOf('month');
+  }
+  return now.endOf('month');
+};
 
 const main = async () => {
-
-  // load
-  const invoices = [];
-  let files = null;
-  try {
-    files = await fs.promises.readdir(config.directory);
-  } catch (e) {
-    error(e.message);
-  }
-  for (let i = 0; i < files.length; i++) {
-    const filename = files[i];
-    if (filename.endsWith('.pdf')) {
-      const fullpath = path.join(config.directory, filename);
-      const buffer = await fs.promises.readFile(fullpath);
-      const data = await pdfparse(buffer);
-      const lines = data.text.split('\n').filter(x => x);
-      const title = 'Račun (Invoice)';
-      if (lines[0] === title || lines[1] === title) {
-        if (invoices.length > 0) {
-          error('More than one invoice found!');
-        }
-        invoices.push({
-          path: fullpath,
-          lines: lines
-        });
-      }
-    }
-  }
-  if (invoices.length !== 1) {
-    error('Cannot find an invoice!');
-  }
-
-  // process
-  const getValue = (lines, label) => {
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith(label)) {
-        return lines[i].replace(label, '');
-      }
-    }
-    error(`Cannot find line with label ${label}`);
-  }
-
-  const invoice = invoices[0];
-
-  const amount = getValue(invoice.lines, 'Ukupan iznos naplate (Grand total):');
-  const invoiceNumber = getValue(invoice.lines, 'Broj računa (Invoice number):');
-  const dateText = getValue(invoice.lines, 'Datum isporuke (Delivery date):');
-
-  console.log(chalk.blue(`Invoice ${invoiceNumber} for ${amount}`));
- 
-  const date = dayjs(dateText, 'DD.MM.YYYY.');
-  if (!date.isValid()) {
-    error('Cannot parse delivery date!');
-  }
-
+  
+  invoice.items = buildItemsFromArguments();
+  
+  const now = getEndOfMonth();
+  const monthNumber = now.month() + 1;
   const dict = {
-    monthNumber: date.month() + 1,
-    monthName: date.format('MMMM'),
-    year: date.year(),
-    invoiceNumber: invoiceNumber
+    monthNumber: monthNumber,
+    monthName: now.format('MMMM'),
+    year: now.year(),
+    invoiceNumber: `${monthNumber}-1-1`
   };
+  
+  log.info('Header:');
+  log.info(dict);
+  
+  invoice.invoiceId = dict.monthNumber;
+  invoice.invoiceMonth = dict.monthNumber;
+  invoice.invoiceYear = dict.year;
+  
+  log.info('Invoice JSON:');
+  log.info(invoice);
+  
+  const settings = {
+    method: 'POST',
+    body: JSON.stringify(invoice),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  
+  const api = 'racuni.radiance.hr';
+  const response = await fetch(`https://${api}/generate`, settings);
+  
+  if (response.status !== 200) {
+    log.error(`${api} returned ${response.status}, cannot continue:`);
+    const content = await response.text();
+    log.info(content);
+    log.fatal();
+  }
+  
+  const pdf = await response.arrayBuffer();
+  if (pdf.byteLength < 30000) {
+    log.fatal(`PDF size suspiciously low (${pdf.byteLength} bytes)`);
+  }
+  
+  log.success(`${api} returned ${response.status} with PDF of ${pdf.byteLength} bytes`);
 
+  // for every template
   for (let i = 0; i < config.templates.length; i++) {
     const template = config.templates[i];
     for (let key in dict) {
@@ -93,25 +122,31 @@ const main = async () => {
       template.subject = template.subject.replaceAll(`{${key}}`, dict[key]);
     }
     template.attachments = [{
-      filename: path.basename(invoice.path),
-      path: invoice.path
+      filename: `${dict.year}-${dict.invoiceNumber}.pdf`,
+      content: Buffer.from(pdf),
+      contentType: 'application/pdf'
     }];
     await send(template);
   }
-  await cleanup(invoice.path);
+  
   rl.close();
 }
 
 const send = async (template) => {
-  console.log('Email to send:');
+  
+  log.info('Email to send:');
   const mail = {
     from: template.from,
     to: template.to,
     subject: template.subject,
     text: template.message,
-    attachments: template.attachments
+    attachments: template.attachments.map(x => x.filename).join(', ') // temporary filenames
   };
-  console.log(colorize(JSON.stringify(mail, null, 2)));
+  
+  // log with fake attachments (string only)
+  log.info(mail);
+  mail.attachments = template.attachments;
+  
   const answer = await question('Send this email? [y/N] ');
   if (answer.trim().toLowerCase() === 'y') {
     const transport = {
@@ -127,20 +162,10 @@ const send = async (template) => {
       }
     };
     const transporter = nodemailer.createTransport(transport);
-    const info = await transporter.sendMail(mail);
-    console.log(chalk.blue(`Message sent to ${template.to.name} <${template.to.address}>\n${info.messageId}`));
+    const sentMessageInfo = await transporter.sendMail(mail);
+    log.success(`Message sent to ${template.to.name} <${template.to.address}>\n${sentMessageInfo.messageId}`);
   } else {
-    console.log(chalk.red('Email NOT sent.'));
-  }
-}
-
-const cleanup = async (filepath) => {
-  const answer = await question(`Delete ${filepath}? [y/N] `);
-  if (answer.trim().toLowerCase() === 'y') {
-    await fs.promises.unlink(filepath);
-    console.log(chalk.blue(`Invoice deleted.`));
-  } else {
-    console.log(chalk.red(`Invoice NOT deleted.`));
+    log.error('Email NOT sent.');
   }
 }
 
