@@ -12,7 +12,7 @@ dayjs.extend(timezone);
 
 const config = require('./config').get();
 const log = require('./log');
-const invoice = require('./invoice');
+const invoice = require('./invoice.json');
 
 // readline setup
 const readline = require('readline');
@@ -58,14 +58,20 @@ const buildItemsFromArguments = () => {
   return items;
 };
 
+const mod = (n, m) => {
+  return ((n % m) + m) % m;
+};
+
 // calculate end of month
 // if before 15th, look at previous month
 const getEndOfMonth = () => {
   const now = dayjs().tz('Europe/Zagreb');
+  let month = now.month();
   if (now.date() <= 15) {
-    return now.endOf('month').subtract(1, 'month');
+    month -= 1;
+    month = mod(month, 12);
   }
-  return now.endOf('month');
+  return dayjs.tz(new Date(now.year(), month, 1), 'Europe/Zagreb').endOf('month');
 };
 
 const main = async () => {

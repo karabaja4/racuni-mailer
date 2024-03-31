@@ -1,6 +1,6 @@
-const config = require('./config.json');
-const chalk = require('chalk');
 const validator = require('email-validator');
+const config = require('./config.json');
+const log = require('./log');
 
 const isAddressObjectValid = (obj) => {
   return obj?.name && obj?.address && validator.validate(obj.address);
@@ -30,8 +30,7 @@ const isValid = () => {
 
 const get = () => {
   if (!isValid()) {
-    console.log(chalk.red('Invalid config.json'));
-    process.exit(1);
+    log.fatal('Invalid config.json');
   }
   return config;
 }
