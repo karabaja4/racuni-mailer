@@ -45,7 +45,7 @@ const buildItemsFromArguments = () => {
       log.usage();
     }
     const item = {
-      description: 'Software Development',
+      description: 'Software development',
       unit: 'dan (day)',
       price: price,
       quantity: days
@@ -131,8 +131,8 @@ const main = async () => {
   for (let i = 0; i < config.templates.length; i++) {
     const template = config.templates[i];
     for (let key in dict) {
-      template.message = template.message.replaceAll(`{${key}}`, dict[key]);
       template.subject = template.subject.replaceAll(`{${key}}`, dict[key]);
+      template.message = template.message.replaceAll(`{${key}}`, dict[key]);
     }
     template.attachments = [{
       filename: pdf.filename,
