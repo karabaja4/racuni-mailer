@@ -60,24 +60,24 @@ const buildItemsFromArguments = () => {
 
 // calculate end of month
 // if before 15th, look at previous month
-const getEndOfMonth = () => {
+const getInvoiceDate = () => {
   const now = dayjs().tz('Europe/Zagreb');
   if (now.date() <= 15) {
-    return now.subtract(20, 'day').endOf('month');
+    return now.subtract(20, 'day');
   }
-  return now.endOf('month');
+  return now;
 };
 
 const main = async () => {
   
   invoice.items = buildItemsFromArguments();
   
-  const now = getEndOfMonth();
-  const monthNumber = now.month() + 1;
+  const invoiceDate = getInvoiceDate();
+  const monthNumber = invoiceDate.month() + 1;
   const dict = {
     monthNumber: monthNumber,
-    monthName: now.format('MMMM'),
-    year: now.year(),
+    monthName: invoiceDate.format('MMMM'),
+    year: invoiceDate.year(),
     invoiceNumber: `${monthNumber}-1-1`
   };
   
