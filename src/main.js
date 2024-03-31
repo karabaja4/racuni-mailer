@@ -63,7 +63,7 @@ const buildItemsFromArguments = () => {
 const getEndOfMonth = () => {
   const now = dayjs().tz('Europe/Zagreb');
   if (now.date() <= 15) {
-    return now.subtract(1, 'month').endOf('month');
+    return now.endOf('month').subtract(1, 'month');
   }
   return now.endOf('month');
 };
@@ -151,12 +151,12 @@ const send = async (template) => {
     from: template.from,
     to: template.to,
     subject: template.subject,
-    text: template.message,
-    attachments: template.attachments.map(x => x.filename).join(', ') // temporary filenames
+    text: template.message
   };
   
-  // log with fake attachments (string only)
   log.info(mail);
+  log.info(`Attachments: ${template.attachments.map(x => x.filename).join(', ')}`);
+  
   mail.attachments = template.attachments;
   
   const answer = await question('Send this email? [y/N] ');
