@@ -155,7 +155,6 @@ const send = async (template) => {
   };
   
   log.info(mail);
-  log.info(`Attachments: ${template.attachments.map(x => x.filename).join(', ')}`);
   
   mail.attachments = template.attachments;
   
