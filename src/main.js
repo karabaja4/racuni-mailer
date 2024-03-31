@@ -122,6 +122,7 @@ const main = async () => {
   };
   
   // save file for preview
+  await fs.promises.mkdir(config.directory, { recursive: true });
   const previewPath = path.join(config.directory, pdf.filename);
   await fs.promises.writeFile(previewPath, pdf.buffer);
   log.success(`File saved at ${previewPath}`);
