@@ -7,7 +7,13 @@ const info = (item) => {
     if (typeof item === 'string') {
       console.log(chalk.blue(item));
     } else {
-      console.log(util.inspect(item, { colors: true, compact: false, depth: null }));
+      const settings = {
+        colors: true,
+        compact: false,
+        depth: Infinity,
+        breakLength: Infinity
+      };
+      console.log(util.inspect(item, settings));
     }
   }
 };
