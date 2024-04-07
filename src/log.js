@@ -4,7 +4,11 @@ const chalk = require('chalk');
 
 const info = (item) => {
   if (item) {
-    console.log(util.inspect(item, { colors: true, compact: false, depth: null }));
+    if (typeof item === 'string') {
+      console.log(chalk.blue(item));
+    } else {
+      console.log(util.inspect(item, { colors: true, compact: false, depth: null }));
+    }
   }
 };
 
