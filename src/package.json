@@ -3,7 +3,6 @@
     "nodemailer": "6.9.13",
     "chalk": "4.1.2",
     "dayjs": "1.11.10",
-    "email-validator": "2.0.4",
-    "json-colorizer": "2.2.2"
+    "email-validator": "2.0.4"
   }
 }

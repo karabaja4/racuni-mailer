@@ -1,14 +1,10 @@
 const path = require('node:path');
+const util = require('node:util');
 const chalk = require('chalk');
-const colorize = require('json-colorizer');
 
-const info = (text) => {
-  if (text) {
-    try {
-      console.log(colorize(text, { pretty: true }));
-    } catch {
-      console.log(text);
-    }
+const info = (item) => {
+  if (item) {
+    console.log(util.inspect(item, { colors: true, compact: false, depth: null }));
   }
 };
 
@@ -31,9 +27,10 @@ const fatal = (text) => {
 
 const usage = () => {
   const script = path.basename(process.argv[1] || 'racuni');
-  console.log(chalk.magenta('racuni 1.1'));
-  console.log(`usage: ${script} ${chalk.red('[days]')}x${chalk.red('[daily-rate-in-€]')}...`);
-  console.log(`example: ${script} 12x400 8x500`);
+  const text = `${chalk.magenta('racuni 1.1')}\n` +
+               `usage: ${script} ${chalk.red('[days]')}x${chalk.red('[daily-rate-in-€]')}...\n` +
+               `example: ${script} 12x400 8x500\n`
+  console.log(text);
   process.exit(2);
 };
 
