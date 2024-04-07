@@ -42,7 +42,7 @@ const usage = () => {
   const script = path.basename(process.argv[1] || 'racuni');
   const text = `${chalk.magenta('racuni 1.1')}\n` +
                `usage: ${script} ${chalk.redBright('[days]')}x${chalk.redBright('[daily-rate-in-€]')}...\n` +
-               `example: ${script} 12x400 8x500\n`
+               `example: ${script} 12x400 8x500`
   console.log(text);
   process.exit(2);
 };
