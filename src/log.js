@@ -3,6 +3,7 @@ const util = require('node:util');
 const chalk = require('chalk');
 
 util.inspect.styles.string = 'magenta';
+util.inspect.styles.number = 'cyan';
 
 const info = (item) => {
   if (item) {
