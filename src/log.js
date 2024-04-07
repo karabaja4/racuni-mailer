@@ -2,10 +2,12 @@ const path = require('node:path');
 const util = require('node:util');
 const chalk = require('chalk');
 
+util.inspect.styles.string = 'magenta';
+
 const info = (item) => {
   if (item) {
     if (typeof item === 'string') {
-      console.log(chalk.blue(item));
+      console.log(chalk.blueBright(item));
     } else {
       const settings = {
         colors: true,
@@ -26,7 +28,7 @@ const success = (text) => {
 
 const error = (text) => {
   if (text) {
-    console.log(chalk.red(text));
+    console.log(chalk.redBright(text));
   }
 };
 
@@ -38,7 +40,7 @@ const fatal = (text) => {
 const usage = () => {
   const script = path.basename(process.argv[1] || 'racuni');
   const text = `${chalk.magenta('racuni 1.1')}\n` +
-               `usage: ${script} ${chalk.red('[days]')}x${chalk.red('[daily-rate-in-€]')}...\n` +
+               `usage: ${script} ${chalk.redBright('[days]')}x${chalk.redBright('[daily-rate-in-€]')}...\n` +
                `example: ${script} 12x400 8x500\n`
   console.log(text);
   process.exit(2);
