@@ -8,7 +8,7 @@ util.inspect.styles.number = 'cyan';
 const info = (item) => {
   if (item) {
     if (typeof item === 'string') {
-      console.log(chalk.blueBright(item));
+      console.log(`[${chalk.blueBright('INFO')}] ${item}`);
     } else {
       const settings = {
         colors: true,
@@ -23,13 +23,13 @@ const info = (item) => {
 
 const success = (text) => {
   if (text) {
-    console.log(chalk.green(text));
+    console.log(`[${chalk.greenBright('SUCCESS')}] ${text}`);
   }
 };
 
 const error = (text) => {
   if (text) {
-    console.log(chalk.redBright(text));
+    console.log(`[${chalk.redBright('ERROR')}] ${text}`);
   }
 };
 

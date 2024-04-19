@@ -80,7 +80,7 @@ const main = async () => {
     invoiceNumber: `${monthNumber}-1-1`
   };
   
-  log.info('Header:');
+  log.info('Placeholders:');
   log.info(dict);
   
   invoice.invoiceId = dict.monthNumber;
@@ -98,8 +98,10 @@ const main = async () => {
     }
   };
   
-  const api = 'racuni.radiance.hr';
-  const response = await fetch(`https://${api}/generate`, settings);
+  const api = 'https://racuni.radiance.hr/generate';
+  
+  log.info(`Generating PDF via ${api}...`);
+  const response = await fetch(api, settings);
   
   if (response.status !== 200) {
     log.error(`${api} returned ${response.status}, cannot continue:`);
@@ -109,11 +111,11 @@ const main = async () => {
   }
   
   const raw = await response.arrayBuffer();
-  if (raw.byteLength < 30000) {
+  if (raw.byteLength < 15000) {
     log.fatal(`PDF size suspiciously low (${raw.byteLength} bytes)`);
   }
   
-  log.success(`${api} returned ${response.status} with PDF of ${raw.byteLength} bytes`);
+  log.success(`Returned ${response.status} and a PDF of ${raw.byteLength} bytes`);
   
   const pdf = {
     filename: `${dict.year}-${dict.invoiceNumber}.pdf`,
