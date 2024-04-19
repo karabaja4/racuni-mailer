@@ -104,9 +104,9 @@ const main = async () => {
   const response = await fetch(api, settings);
   
   if (response.status !== 200) {
-    log.error(`${api} returned ${response.status}, cannot continue:`);
+    log.error(`Returned ${response.status}, cannot continue.`);
     const content = await response.text();
-    log.info(content);
+    log.error(`Response:\n${content}`);
     log.fatal();
   }
   
