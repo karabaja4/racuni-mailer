@@ -126,7 +126,7 @@ const main = async () => {
   await fs.promises.mkdir(config.directory, { recursive: true });
   const previewPath = path.join(config.directory, pdf.filename);
   await fs.promises.writeFile(previewPath, pdf.buffer);
-  log.success(`File saved at ${previewPath}`);
+  log.success(`PDF saved at ${previewPath}`);
 
   // for every template
   for (let i = 0; i < config.templates.length; i++) {
