@@ -98,10 +98,10 @@ const main = async () => {
     }
   };
   
-  const api = 'https://racuni.radiance.hr/generate';
+  const url = 'https://racuni.radiance.hr/generate';
   
-  log.info(`Generating PDF via ${api}...`);
-  const response = await fetch(api, settings);
+  log.info(`Generating PDF via ${url}...`);
+  const response = await fetch(url, settings);
   
   if (response.status !== 200) {
     log.error(`Returned ${response.status}, cannot continue.`);
