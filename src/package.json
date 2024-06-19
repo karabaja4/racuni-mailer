@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "nodemailer": "6.9.13",
+    "nodemailer": "6.9.14",
     "dayjs": "1.11.11",
     "email-validator": "2.0.4"
   }
