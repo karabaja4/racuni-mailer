@@ -309,7 +309,7 @@ const main = async () => {
       contentType: 'application/pdf'
     }];
     
-    console.log('*'.repeat(100));
+    console.log('*'.repeat(80));
     log.info('Email to send:');
     log.info({
       to: template.to,
