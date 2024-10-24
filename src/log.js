@@ -31,7 +31,9 @@ const info = (item) => {
 };
 
 const success = (text) => print(32, 'SUCCESS', text);
-const error = (text) => print(91, 'ERROR', text);
+const error = (err) => {
+  return print(91, 'ERROR', err.stack || err.message || err);
+};
 
 const fatal = (text) => {
   error(text);

@@ -7,16 +7,18 @@ const isAddressObjectValid = (obj) => {
 }
 
 const isTemplateValid = (template) => {
-  return template?.username &&
-    template?.password &&
-    isAddressObjectValid(template?.from) &&
+  return template?.code &&
     isAddressObjectValid(template?.to) &&
     template?.subject &&
     template?.message;
 }
 
 const isValid = () => {
-  if (!config.directory || !config.templates || config.templates.length === 0) {
+  if (!config.directory ||
+      !config.app?.id ||
+      !config.app?.secret ||
+      !config.templates ||
+      (config.templates.length === 0)) {
     return false;
   } else {
     for (let i = 0; i < config.templates.length; i++) {

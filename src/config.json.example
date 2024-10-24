@@ -1,13 +1,21 @@
 {
   "directory": "/home/vandelay/invoices",
+  "app": {
+    "id": "<Application (client) ID>",
+    "secret": "<client secret value>"
+  },
   "templates": [
     {
-      "username": "art.vandelay@vandelayindustries.com",
-      "password": "mysupersecretpassword",
-      "from": { "name": "Art Vandelay", "address": "art.vandelay@vandelayindustries.com" },
-      "to": { "name": "Jerry Seinfeld", "address": "jerry@seinfeld.com" },
+      "code": "<auth code>",
+      "to": { "name": "Art Vandelay", "address": "art.vandelay@vandelayindustries.com" },
+      "subject": "Račun {invoiceNumber} - Vandelay Industries",
+      "message": "U prilogu, za {monthNumber}. mjesec.\n\nIzvod će doći po uplati.\n\nPozdrav,\n\nArt"
+    },
+    {
+      "code": "<auth code>",
+      "to": { "name": "Burt Harbinson", "address": "burt.harbinson@vandelayindustries.com" },
       "subject": "Invoice {year}-{invoiceNumber}",
-      "message": "A copy of the invoice for month {monthNumber} ({monthName}) {year}.\n\nRegards,\n\nVandelay Industries Ltd\nArt Vandelay"
+      "message": "A copy of the invoice for {monthName} {year}. filed with accounting.\n\nNo action is required on your part.\n\nRegards,\n\nVandelay Industries Ltd\nArt Vandelay"
     }
   ]
 }
