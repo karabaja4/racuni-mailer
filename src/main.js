@@ -309,7 +309,7 @@ const main = async () => {
       contentType: 'application/pdf'
     }];
     
-    log.info('Email to send:');
+    log.info('*******************************\nEmail to send:');
     log.info({
       to: template.to,
       subject: template.subject,
