@@ -49,15 +49,10 @@ const usage = () => {
   process.exit(2);
 };
 
-const sep = () => {
-  console.log('*'.repeat(80));
-};
-
 module.exports = {
   info,
   success,
   error,
   fatal,
-  usage,
-  sep
+  usage
 };

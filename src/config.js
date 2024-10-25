@@ -7,7 +7,8 @@ const isAddressObjectValid = (obj) => {
 }
 
 const isTemplateValid = (template) => {
-  return template?.code &&
+  return template?.label &&
+    template?.code &&
     isAddressObjectValid(template?.to) &&
     template?.subject &&
     template?.message;

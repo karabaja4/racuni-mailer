@@ -148,7 +148,7 @@ const getToken = async (code) => {
   
   log.success(`Tokens retrieved successfully (${response.status}) using ${grantType}.`);
   await getOrUpdateCachedRefreshToken(code, result.refresh_token);
-  log.info(`Cached the new refresh_token to ${cachedRefreshTokenPath}.`);
+  log.info('Cached the new refresh_token.');
 
   return result.access_token || null;
 };
@@ -156,28 +156,6 @@ const getToken = async (code) => {
 const graphSendEmail = async (template) => {
   
   const token = await getToken(template.code);
-  
-  // get email details
-  const aboutResponse = await fetch('https://graph.microsoft.com/v1.0/me', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    },
-  });
-  
-  // check status
-  if (aboutResponse.status !== 200) {
-    const responseText = await aboutResponse.text();
-    log.fatal(`Unable to get email details (${aboutResponse.status}): ${responseText}`);
-  }
-  
-  // check fields
-  const about = await aboutResponse.json();
-  if (!about.displayName || !about.userPrincipalName) {
-    const responseText = await aboutResponse.text();
-    log.fatal(`Unable to extract email details: ${responseText}`);
-  }
-  log.info(`Sending email from: ${about.displayName} <${about.userPrincipalName}>`);
   
   // send email
   const body = {
@@ -193,6 +171,12 @@ const graphSendEmail = async (template) => {
           name: template.to.name
         }
       }],
+      attachments: template.attachments.map(x => ({
+        '@odata.type': '#microsoft.graph.fileAttachment',
+        name: x.filename,
+        contentType: x.contentType,
+        contentBytes: x.content
+      })),
       singleValueExtendedProperties: [{
         id: 'Integer 0x3fde',
         value: '28592' // code page for ISO 8859-2 which is 28592
@@ -200,20 +184,6 @@ const graphSendEmail = async (template) => {
     },
     saveToSentItems: true
   };
-  
-  // process attachments
-  for (let i = 0; i < template.attachments.length; i++) {
-    if (!body.message.attachments) {
-      body.message.attachments = [];
-    }
-    const at = template.attachments[i];
-    body.message.attachments.push({
-      '@odata.type': '#microsoft.graph.fileAttachment',
-      name: at.filename,
-      contentType: at.contentType,
-      contentBytes: at.content
-    });
-  }
   
   const sendResponse = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
     method: 'POST',
@@ -230,6 +200,7 @@ const graphSendEmail = async (template) => {
     const responseText = await sendResponse.text();
     log.error(`Email failed to send (${sendResponse.status}): {${responseText}}`);
   }
+  
 };
 
 const main = async () => {
@@ -309,10 +280,9 @@ const main = async () => {
       contentType: 'application/pdf'
     }];
     
-    log.sep();
-    log.info('Email to send:');
+    log.info(`(${i+1}/${config.templates.length}) Email to send:`);
     log.info({
-      code: template.code,
+      from: template.label,
       to: template.to,
       subject: template.subject,
       message: template.message,
