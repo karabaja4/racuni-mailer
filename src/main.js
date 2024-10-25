@@ -315,7 +315,7 @@ const main = async () => {
       code: template.code,
       to: template.to,
       subject: template.subject,
-      text: template.message,
+      message: template.message,
       attachment: template.attachments[0].filename
     });
     
