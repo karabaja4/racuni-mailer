@@ -312,9 +312,11 @@ const main = async () => {
     log.sep();
     log.info('Email to send:');
     log.info({
+      code: template.code,
       to: template.to,
       subject: template.subject,
-      text: template.message
+      text: template.message,
+      attachment: template.attachments[0].filename
     });
     
     const answer = await question('Send this email? [y/N] ');
