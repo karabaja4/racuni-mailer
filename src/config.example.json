@@ -6,16 +6,18 @@
   },
   "templates": [
     {
+      "label": "art.vandelay@vandelayindustries.com",
       "code": "<auth code>",
-      "to": { "name": "Art Vandelay", "address": "art.vandelay@vandelayindustries.com" },
-      "subject": "Račun {invoiceNumber} - Vandelay Industries",
-      "message": "U prilogu, za {monthNumber}. mjesec.\n\nIzvod će doći po uplati.\n\nPozdrav,\n\nArt"
-    },
-    {
-      "code": "<auth code>",
-      "to": { "name": "Burt Harbinson", "address": "burt.harbinson@vandelayindustries.com" },
+      "to": { "name": "Newman", "address": "newman@usps.com" },
       "subject": "Invoice {year}-{invoiceNumber}",
       "message": "A copy of the invoice for {monthName} {year}. filed with accounting.\n\nNo action is required on your part.\n\nRegards,\n\nVandelay Industries Ltd\nArt Vandelay"
+    },
+    {
+      "label": "burt.harbinson@vandelayindustries.com",
+      "code": "<auth code>",
+      "to": { "name": "Jerry Seinfeld", "address": "jerry@seinfeld.com" },
+      "subject": "Račun {invoiceNumber} - Vandelay Industries",
+      "message": "U prilogu, za {monthNumber}. mjesec.\n\nIzvod će doći po uplati.\n\nPozdrav,\n\nBurt"
     }
   ]
 }
